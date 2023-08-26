@@ -3,8 +3,8 @@ import "./App.css";
 import LineChart from "./Component/LineChart";
 import axios from "axios";
 import sampledata from "./data.json"
-import rsi_sample_data from "./combined_rsi_data.json"
-import sma_sample_data from "./combined_sma_data.json"
+import rsi_sample_data from "./rsi-close.json"
+import sma_sample_data from "./sma-close.json"
 import ema_sample_data from "./ema-close.json"
 
 function App() {
@@ -129,7 +129,7 @@ function App() {
       </div>
       <div className="chart-container" >
         {displayedTicker && <h1 className="ticker-heading">{displayedTicker}</h1>}
-        <LineChart key={timeframe} passedData = {defaultData} rsiData = {rsi} emaData = {ema} timeframe={timeframe}/>
+        <LineChart key={timeframe} passedData = {defaultData} smaData = {sma} rsiData = {rsi} emaData = {ema} timeframe={timeframe}/>
       </div>
     </div>
   )

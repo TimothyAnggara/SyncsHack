@@ -26,6 +26,32 @@ def convert_to_json(data_frame):
     
     return json_data
 
+def convert_to_json_SMA(data_frame):
+    json_data = {}
+    
+    for index, row in data_frame.iterrows():
+        date = str(index.date())
+        sma_close = row['SMA']
+
+        if np.isnan(sma_close):
+            json_data[date] = "null"
+        else:
+            json_data[date] = sma_close
+    
+    return json_data
+
+def convert_to_json_RSI(data_frame):
+    json_data = {}
+    
+    for index, row in data_frame.iterrows():
+        date = str(index.date())
+        rsi_close = row['rsi']
+
+        if not np.isnan(rsi_close):
+            json_data[date] = rsi_close
+    
+    return json_data
+
 @app.route('/fetchData/<symbol>', methods=['GET'])
 def fetchData(symbol):
     API_URL_DAILY = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={API_KEY}"
@@ -46,68 +72,43 @@ def fetchData(symbol):
 
 @app.route('/sma', methods=['GET'])
 def get_sma():
-    # Collect data as before
     combined_data = fetchedData
+    daily_df = SMA(combined_data, 'daily', 3)
+    weekly_df = SMA(combined_data, 'weekly', 3)
+    monthly_df = SMA(combined_data, 'monthly', 3)
+    daily_json_data = convert_to_json_SMA(daily_df)
+    weekly_json_data = convert_to_json_SMA(weekly_df)
+    monthly_json_data = convert_to_json_SMA(monthly_df)
 
-    df_daily = SMA(combined_data, 'daily', 3)
-    daily_data = df_daily['SMA']
-
-    df_weekly = SMA(combined_data, 'weekly', 3)
-    weekly_data = df_weekly['SMA']
-
-    df_monthly = SMA(combined_data, 'monthly', 3)
-    monthly_data = df_monthly['SMA']
-
-    daily_data_dict = daily_data.to_dict()
-    weekly_data_dict = weekly_data.to_dict()
-    monthly_data_dict = monthly_data.to_dict()
-
-    # Convert dictionary to JSON format
-    combined_data = {
-        "daily": daily_data_dict,
-        "weekly": weekly_data_dict,
-        "monthly": monthly_data_dict
+    combined_json_data = {
+        "Daily": daily_json_data,
+        "Weekly": weekly_json_data,
+        "Monthly": monthly_json_data
     }
 
-    combined_data_json = json.dumps(combined_data, default=str)
-    return combined_data_json
+    with open("sma-close.json", 'w') as output_json_file:
+        json.dump(combined_json_data, output_json_file, indent=4)
+
+    print("JSON conversion complete.")
 @app.route('/rsi', methods=['GET'])
 def get_rsi():
     # Collect data as before
     combined_data = fetchedData
     
-    window_length = 4
-    start_date = '0'
-    end_date = '0'
+    daily_df = RSI_daily(combined_data, 14)
+    weekly_df = RSI_weekly(combined_data, 14)
+    monthly_df = RSI_monthly(combined_data, 14)
+    daily_json_data = convert_to_json(daily_df)
+    weekly_json_data = convert_to_json(weekly_df)
+    monthly_json_data = convert_to_json(monthly_df)
 
-    df_daily = RSI_daily(combined_data, window_length, start_date, end_date)
-    daily_rsi_data = df_daily['rsi']
-
-    df_weekly = RSI_weekly(combined_data, window_length, start_date, end_date)
-    weekly_rsi_data = df_weekly['rsi']
-
-    df_monthly = RSI_monthly(combined_data, window_length, start_date, end_date)
-    monthly_rsi_data = df_monthly['rsi']
-
-    # Convert Timestamps to strings for each RSI dictionary
-    daily_rsi_dict = daily_rsi_data.reset_index().astype(str).set_index('index').to_dict()['rsi']
-    weekly_rsi_dict = weekly_rsi_data.reset_index().astype(str).set_index('index').to_dict()['rsi']
-    monthly_rsi_dict = monthly_rsi_data.reset_index().astype(str).set_index('index').to_dict()['rsi']
-    
-    daily_rsi_dict = filter_nan_values(daily_rsi_dict)
-    weekly_rsi_dict = filter_nan_values(weekly_rsi_dict)
-    monthly_rsi_dict = filter_nan_values(monthly_rsi_dict)
-
-    
     combined_rsi_data = {
-    "daily": daily_rsi_dict,
-    "weekly": weekly_rsi_dict,
-    "monthly": monthly_rsi_dict
+        "Daily": daily_json_data,
+        "Weekly": weekly_json_data,
+        "Monthly": monthly_json_data
     }
-
-    # 4. Serialize the final combined dictionary to a JSON format
-    combined_rsi_json = json.dumps(combined_rsi_data, default=str, indent=4)
-    return combined_rsi_json
+    combined_rsi_data = json.dumps(combined_rsi_data, default=str, indent=4)
+    return combined_rsi_data
 
 @app.route('/ema', methods=['GET'])
 def get_ema():

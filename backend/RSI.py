@@ -1,43 +1,51 @@
 import pandas as pd
+import pandas_ta as ta
 import matplotlib.pyplot as plt
+import numpy as np
 import json
 
-def calculate_rsi(data, window_length):
-    delta = data.diff(1)
-    gain = delta.where(delta > 0, 0)
-    loss = -delta.where(delta < 0, 0)
 
-    avg_gain = gain.rolling(window=window_length).mean()
-    avg_loss = loss.rolling(window=window_length).mean()
+# Load JSON data from file
+# with open('daily-sample.json', 'r') as json_file:
+#     daily_sample_data = json.load(json_file)
 
-    rs = avg_gain / avg_loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
+# with open('weekly-sample.json', 'r') as json_file:
+#     weekly_sample_data = json.load(json_file)
+    
+# with open('monthly-sample.json', 'r') as json_file:
+#     monthly_sample_data = json.load(json_file)
+       
+# def calculate_rsi(data, window_length):
+#     delta = data.diff(1)
+#     gain = delta.where(delta > 0, 0)
+#     loss = -delta.where(delta < 0, 0)
 
-def RSI_monthly(datajson, window_length, start_date, end_date):
+#     avg_gain = gain.rolling(window=window_length).mean()
+#     avg_loss = loss.rolling(window=window_length).mean()
+
+#     rs = avg_gain / avg_loss
+#     rsi = 100 - (100 / (1 + rs))
+#     return rsi
+
+def RSI_monthly(datajson, window_length):
     #with open(json.dumps(datajson), 'r') as json_file: OPENS FILE
     #    json_data = json.load(json_file) , turns file into json object
     json_data = datajson # datajson is a json file
 
     # extract monthly adjusted time series data
     time_series_data = json_data['monthly']["Monthly Adjusted Time Series"]
+    df = pd.DataFrame.from_dict(time_series_data, orient='index')
     
-    df = pd.DataFrame(time_series_data).T
+    # Convert column data to numeric
+    numeric_columns = ["1. open", "2. high", "3. low", "4. close", "5. adjusted close", "6. volume", "7. dividend amount"]
+    df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric)
+    
     df.index = pd.to_datetime(df.index) # so there's no overlap of years
 
-    df = df.apply(pd.to_numeric, errors='coerce') 
 
-    if (start_date == '0') & (end_date == '0'): # no start/end date = default ALL months
-        pass
-    else:
-        filtered_df = df[(df.index >= start_date) & (df.index <= end_date)]
-        df = filtered_df
+    df['rsi'] = ta.rsi(df['4. close'], length=window_length)
 
-    df['rsi'] = calculate_rsi(df['4. close'], window_length)
-    #print(df['rsi'])
-
-    return df # for silvey, possibly need .toString like pudding said??
-
+    return df
     ''' # plotting
     plt.figure(figsize=(10, 6))
     plt.plot(df.index, df['rsi'], label='RSI')
@@ -51,29 +59,25 @@ def RSI_monthly(datajson, window_length, start_date, end_date):
     plt.show() '''
     
 
-def RSI_weekly(datajson, window_length, start_date, end_date):
+def RSI_weekly(datajson, window_length):
     #with open(json.dumps(datajson), 'r') as json_file: OPENS FILE
     #    json_data = json.load(json_file) , turns file into json object
     json_data = datajson # datajson is a json file
 
     # extract weekly adjusted time series data
     time_series_data = json_data['weekly']["Weekly Adjusted Time Series"]
+    df = pd.DataFrame.from_dict(time_series_data, orient='index')
     
-    df = pd.DataFrame(time_series_data).T
+    # Convert column data to numeric
+    numeric_columns = ["1. open", "2. high", "3. low", "4. close", "5. adjusted close", "6. volume", "7. dividend amount"]
+    df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric)
+    
     df.index = pd.to_datetime(df.index) # so there's no overlap of years
 
-    df = df.apply(pd.to_numeric, errors='coerce') 
 
-    if (start_date == '0') & (end_date == '0'): # no start/end date = default ALL
-        pass
-    else:
-        filtered_df = df[(df.index >= start_date) & (df.index <= end_date)]
-        df = filtered_df
+    df['rsi'] = ta.rsi(df['4. close'], length=window_length)
 
-    df['rsi'] = calculate_rsi(df['4. close'], window_length)
-    #print(df['rsi'])
-
-    return df # for silvey, possibly need .toString like pudding said??
+    return df
 
     '''# plotting
     plt.figure(figsize=(10, 6))
@@ -88,30 +92,26 @@ def RSI_weekly(datajson, window_length, start_date, end_date):
     plt.show()'''
 
 
-def RSI_daily(datajson, window_length, start_date, end_date):
+def RSI_daily(datajson, window_length):
     #with open(json.dumps(datajson), 'r') as json_file: OPENS FILE
     #    json_data = json.load(json_file) , turns file into json object
     json_data = datajson # datajson is a json file
 
     # extract weekly adjusted time series data
-    time_series_data = json_data["daily"]["Time Series (Daily)"]
+    time_series_data = json_data['daily']["Time Series (Daily)"]
     
-    df = pd.DataFrame(time_series_data).T
-    df.index = pd.to_datetime(df.index) #change so there's no overlap of years
-
-    df = df.apply(pd.to_numeric, errors='coerce')
-
-    if (start_date == '0') & (end_date == '0'): # no start/end date = default ALL data
-        pass
-    else:
-        filtered_df = df[(df.index >= start_date) & (df.index <= end_date)]
-        df = filtered_df
-
-    df['rsi'] = calculate_rsi(df['4. close'], window_length)
-    #print(df['rsi'])
+    df = pd.DataFrame.from_dict(time_series_data, orient='index')
     
-    return df # for silvey, possibly need .toString like pudding said??
+    # Convert column data to numeric
+    numeric_columns = ["1. open", "2. high", "3. low", "4. close", "5. volume"]
+    df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric)
+    
+    df.index = pd.to_datetime(df.index) # so there's no overlap of years
 
+
+    df['rsi'] = ta.rsi(df['4. close'], length=window_length)
+
+    return df
     '''# plotting
     plt.figure(figsize=(10, 6))
     plt.plot(df.index, df['rsi'], label='RSI')
@@ -124,8 +124,6 @@ def RSI_daily(datajson, window_length, start_date, end_date):
     plt.grid(True)
     plt.show()'''
 
-with open('data.json', 'r') as file:
-    data = json.load(file)
 #Test monthly
 #RSI_monthly(fetch.fetchDataMonthly("AAPL"), 4, '0', '0')
 
@@ -133,41 +131,34 @@ with open('data.json', 'r') as file:
 #RSI_weekly(fetch.fetchDataWeekly("AAPL"), 4, '0', '0')
 
 #Test daily
-window_length = 14
-start_date = '0'
-end_date = '0'
+#RSI_daily(fetch.fetchDataDaily("TSLA"), 4, '0', '0')
+def convert_to_json(data_frame):
+    json_data = {}
+    
+    for index, row in data_frame.iterrows():
+        date = str(index.date())
+        rsi_close = row['rsi']
 
-df_daily = RSI_daily(data, window_length, start_date, end_date)
-daily_rsi_data = df_daily['rsi']
+        if not np.isnan(rsi_close):
+            json_data[date] = rsi_close
+    
+    return json_data
+with open('data.json', 'r') as file:
+    data = json.load(file)
+daily_df = RSI_daily(data, 14)
+weekly_df = RSI_weekly(data, 14)
+monthly_df = RSI_monthly(data, 14)
+daily_json_data = convert_to_json(daily_df)
+weekly_json_data = convert_to_json(weekly_df)
+monthly_json_data = convert_to_json(monthly_df)
 
-df_weekly = RSI_weekly(data, window_length, start_date, end_date)
-weekly_rsi_data = df_weekly['rsi']
-
-df_monthly = RSI_monthly(data, window_length, start_date, end_date)
-monthly_rsi_data = df_monthly['rsi']
-
-# Convert Timestamps to strings for each RSI dictionary
-daily_rsi_dict = daily_rsi_data.reset_index().astype(str).set_index('index').to_dict()['rsi']
-weekly_rsi_dict = weekly_rsi_data.reset_index().astype(str).set_index('index').to_dict()['rsi']
-monthly_rsi_dict = monthly_rsi_data.reset_index().astype(str).set_index('index').to_dict()['rsi']
-
-
-# 2. Convert the 'rsi' column from each dataframe to a dictionary
-# daily_rsi_dict = daily_rsi_data.to_dict()
-# weekly_rsi_dict = weekly_rsi_data.to_dict()
-# monthly_rsi_dict = monthly_rsi_data.to_dict()
-
-# 3. Combine these dictionaries into a single dictionary
-combined_rsi_data = {
-    "daily": daily_rsi_dict,
-    "weekly": weekly_rsi_dict,
-    "monthly": monthly_rsi_dict
+combined_json_data = {
+    "Daily": daily_json_data,
+    "Weekly": weekly_json_data,
+    "Monthly": monthly_json_data
 }
 
-# 4. Serialize the final combined dictionary to a JSON format
-combined_rsi_json = json.dumps(combined_rsi_data, default=str, indent=4)
+with open("rsi-close.json", 'w') as output_json_file:
+    json.dump(combined_json_data, output_json_file, indent=4)
 
-# 5. Save the JSON string to a file
-with open('combined_rsi_data.json', 'w') as file:
-    file.write(combined_rsi_json)
-
+print("JSON conversion complete.")

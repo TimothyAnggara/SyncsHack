@@ -25,7 +25,9 @@ input[type="text"]:focus {
 }
 
 .chart-container {
-  width: 700px;
+  width: 90%; /* You can set this as per your need */
+  max-width: 750px; /* Optional: This ensures the container doesn't get too big on large screens */
+  margin: 0 auto; /* This will center the container */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -47,6 +49,7 @@ input[type="text"]:focus {
   width: 100%;
   max-width: 400px;
   margin-top: 20px;
+  background-color: #f5f6f7;
 }
 
 
@@ -92,4 +95,11 @@ input[type="text"]:focus {
 .selectors-containers button.selected {
   background-color: #007BFF;
   color: #ffffff;
+  
+}
+
+.LineChart-containers {
+  width: 100%; /* Take up the full width of its parent container */
+  height: 500px; /* Or however tall you want it */
+  background-color: #f5f6f7;
 }

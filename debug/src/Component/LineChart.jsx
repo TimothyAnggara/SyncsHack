@@ -2,31 +2,39 @@ import React from "react";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 
-function LineChart({passedData, rsiData, emaData, timeframe}) {
+function LineChart({passedData, rsiData, emaData, smaData, timeframe}) {
   let selectedData;
   let selectedEma;
   let selectedRsi;
-  console.log(emaData)
+  let selectedSma;
+  console.log({name:"SMA", smaData})
+  console.log({name:"RSI", emaData})
+  console.log({name:"EMA", emaData})
   switch (timeframe) {
     case 'daily':
       selectedData = passedData.daily["Time Series (Daily)"];
-      selectedEma = emaData.daily
-      selectedRsi = rsiData.daily
+      selectedEma = Object.values(emaData.Daily)
+      selectedRsi = Object.values(rsiData.Daily)
+      selectedSma = Object.values(smaData.Daily)
       break;
     case 'weekly':
       selectedData = passedData.weekly["Weekly Adjusted Time Series"];
-      selectedEma = emaData.weekly
-      selectedRsi = rsiData.weekly
+      selectedEma = Object.values(emaData.Weekly)
+      selectedRsi = Object.values(rsiData.Weekly)
+      selectedSma = Object.values(smaData.Weekly)
       break;
     case 'monthly':
       selectedData = passedData.monthly["Monthly Adjusted Time Series"];
-      selectedEma = emaData.monthly
-      selectedRsi = rsiData.monthly
+      selectedEma = Object.values(emaData.Monthly)
+      selectedRsi = Object.values(rsiData.Monthly)
+      selectedSma = Object.values(smaData.Monthly)
       break;
     default:
       selectedData = passedData.daily["Time Series (Daily)"]; // Default to daily if no match
-      selectedEma = emaData.daily
-      selectedRsi = rsiData.monthly
+      selectedEma = Object.values(emaData.Daily)
+      selectedRsi = Object.values(rsiData.Daily)
+      selectedSma = Object.values(smaData.Daily)
+ 
     }
 
 
@@ -63,11 +71,38 @@ function LineChart({passedData, rsiData, emaData, timeframe}) {
         data: closes,
         borderColor: 'rgba(54,162,235,1)',
         fill: false
+      },
+      {
+        label: 'EMA',
+        data: selectedEma,
+        borderColor: 'rgba(54,162,235,1)',
+        fill: false
+      },
+      {
+        label: 'SMA',
+        data: selectedSma,
+        borderColor: 'rgba(54,162,235,1)',
+        fill: false
       }
     ]
+    
   };
+  const rsiChart = {
+    labels: dates,
+    datasets: [
+      {
+        label: 'RSI',
+        data: selectedRsi,
+        borderColor: 'rgba(75,192,192,1)',
+        fill: false
+      }
+    ]
+  }
   
-  return <Line data={chartData} />;
+  return <div className="LineChart-containers">
+      <Line data={chartData} />
+      <Line data = {rsiChart} />
+    </div>;
 }
 
 export default LineChart;
