@@ -1,17 +1,26 @@
 import { useState } from "react";
 import "./App.css";
 import LineChart from "./Component/LineChart";
+import axios from "axios";
 
 function App() {
   const handleChange = (e) =>{
     setTicker(e.target.value);
   }
-  const [ticker, setTicker] = useState("")
+  const [ticker, setTicker] = useState("");
+  const [defaultData, setDefaultData] = useState(null);
   const [displayedTicker, setDisplayedTicker] = useState("");
  
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       setDisplayedTicker(ticker);
+      axios.get(`http://localhost:5000/fetchData/${ticker}`)
+      .then(response => {
+        // process the response data (you might want to update your state with this data)
+        setDefaultData(response.data)
+      }).catch(error => {
+        console.error("Error fetching data: ", error)
+      })
     }
   }
   
