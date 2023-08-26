@@ -2,34 +2,41 @@ import React from "react";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 
-function LineChart({passedData, timeframe}) {
-  // console.log(passedData)
-  console.log(passedData.daily["Time Series (Daily)"])
-  console.log(passedData.weekly["Weekly Adjusted Time Series"])
-  console.log(passedData.monthly["Monthly Adjusted Time Series"])
+function LineChart({passedData, rsiData, emaData, timeframe}) {
   let selectedData;
+  let selectedEma;
+  let selectedRsi;
+  console.log(emaData)
   switch (timeframe) {
     case 'daily':
       selectedData = passedData.daily["Time Series (Daily)"];
+      selectedEma = emaData.daily
+      selectedRsi = rsiData.daily
       break;
     case 'weekly':
       selectedData = passedData.weekly["Weekly Adjusted Time Series"];
+      selectedEma = emaData.weekly
+      selectedRsi = rsiData.weekly
       break;
     case 'monthly':
       selectedData = passedData.monthly["Monthly Adjusted Time Series"];
+      selectedEma = emaData.monthly
+      selectedRsi = rsiData.monthly
       break;
     default:
       selectedData = passedData.daily["Time Series (Daily)"]; // Default to daily if no match
-  }
-  
-  // console.log(timeframe)
-  // console.log(selectedData)
+      selectedEma = emaData.daily
+      selectedRsi = rsiData.monthly
+    }
+
+
   const dates = Object.keys(selectedData);
   const opens = dates.map(date => parseFloat(selectedData[date]["1. open"]));
   const highs = dates.map(date => parseFloat(selectedData[date]["2. high"]));
   const lows = dates.map(date => parseFloat(selectedData[date]["3. low"]));
   const closes = dates.map(date => parseFloat(selectedData[date]["4. close"]));
-  
+
+
   const chartData  = {
     labels: dates,
     datasets: [
