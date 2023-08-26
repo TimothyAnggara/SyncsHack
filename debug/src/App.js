@@ -3,9 +3,9 @@ import "./App.css";
 import LineChart from "./Component/LineChart";
 import axios from "axios";
 import sampledata from "./data.json"
-import rsi_sample_data from "./rsi-close.json"
-import sma_sample_data from "./sma-close.json"
-import ema_sample_data from "./ema-close.json"
+import rsi_sample_data from "./Sample_data/rsi-close.json"
+import sma_sample_data from "./Sample_data/sma-close.json"
+import ema_sample_data from "./Sample_data/ema-close.json"
 
 function App() {
   const handleChange = (e) =>{
