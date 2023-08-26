@@ -15,17 +15,17 @@ import json
 # with open('monthly-sample.json', 'r') as json_file:
 #     monthly_sample_data = json.load(json_file)
        
-# def calculate_rsi(data, window_length):
-#     delta = data.diff(1)
-#     gain = delta.where(delta > 0, 0)
-#     loss = -delta.where(delta < 0, 0)
+def calculate_rsi(data, window_length):
+    delta = data.diff(1)
+    gain = delta.where(delta > 0, 0)
+    loss = -delta.where(delta < 0, 0)
 
-#     avg_gain = gain.rolling(window=window_length).mean()
-#     avg_loss = loss.rolling(window=window_length).mean()
+    avg_gain = gain.rolling(window=window_length).mean()
+    avg_loss = loss.rolling(window=window_length).mean()
 
-#     rs = avg_gain / avg_loss
-#     rsi = 100 - (100 / (1 + rs))
-#     return rsi
+    rs = avg_gain / avg_loss
+    rsi = 100 - (100 / (1 + rs))
+    return rsi
 
 def RSI_monthly(datajson, window_length):
     #with open(json.dumps(datajson), 'r') as json_file: OPENS FILE

@@ -2,6 +2,7 @@ from flask import Flask, jsonify #pip install Flask
 import requests #pip install requests
 from flask_cors import CORS #pip install Flask-Cors
 from SMA import SMA
+import numpy as np
 from RSI import calculate_rsi, RSI_monthly, RSI_daily, RSI_weekly
 from EMA import daily_ema, weekly_ema, monthly_ema
 import json
@@ -10,7 +11,7 @@ import math
 app = Flask(__name__)
 CORS(app)
 
-API_KEY = "6ZP516EDZC9M2JBK"
+API_KEY = "URHDDP47K504ZBEY"
 with open('data.json', 'r') as file:
     fetchedData = json.load(file)
     
@@ -33,9 +34,7 @@ def convert_to_json_SMA(data_frame):
         date = str(index.date())
         sma_close = row['SMA']
 
-        if np.isnan(sma_close):
-            json_data[date] = "null"
-        else:
+        if not np.isnan(sma_close):
             json_data[date] = sma_close
     
     return json_data
@@ -86,10 +85,9 @@ def get_sma():
         "Monthly": monthly_json_data
     }
 
-    with open("sma-close.json", 'w') as output_json_file:
-        json.dump(combined_json_data, output_json_file, indent=4)
+    combined_sma_data = json.dumps(combined_json_data)
+    return combined_sma_data
 
-    print("JSON conversion complete.")
 @app.route('/rsi', methods=['GET'])
 def get_rsi():
     # Collect data as before
@@ -98,21 +96,23 @@ def get_rsi():
     daily_df = RSI_daily(combined_data, 14)
     weekly_df = RSI_weekly(combined_data, 14)
     monthly_df = RSI_monthly(combined_data, 14)
-    daily_json_data = convert_to_json(daily_df)
-    weekly_json_data = convert_to_json(weekly_df)
-    monthly_json_data = convert_to_json(monthly_df)
+    daily_json_data = convert_to_json_RSI(daily_df)
+    weekly_json_data = convert_to_json_RSI(weekly_df)
+    monthly_json_data = convert_to_json_RSI(monthly_df)
 
     combined_rsi_data = {
         "Daily": daily_json_data,
         "Weekly": weekly_json_data,
         "Monthly": monthly_json_data
     }
-    combined_rsi_data = json.dumps(combined_rsi_data, default=str, indent=4)
+    combined_rsi_data = json.dumps(combined_rsi_data)
     return combined_rsi_data
 
 @app.route('/ema', methods=['GET'])
 def get_ema():
+    
     combined_data = fetchedData
+    
     daily_df = daily_ema(combined_data, 20)
     weekly_df = weekly_ema(combined_data, 20)
     monthly_df = monthly_ema(combined_data, 20)
@@ -125,7 +125,7 @@ def get_ema():
     "Weekly": weekly_json_data,
     "Monthly": monthly_json_data
     }   
-    combined_ema_json = json.dumps(combined_ema_data, default=str, indent=4)
+    combined_ema_json = json.dumps(combined_ema_data)
     return combined_ema_json
 
         

@@ -7,37 +7,39 @@ function LineChart({passedData, rsiData, emaData, smaData, timeframe}) {
   let selectedEma;
   let selectedRsi;
   let selectedSma;
-  console.log({name:"SMA", smaData})
+  console.log({name:"Passed Data", passedData})
   console.log({name:"RSI", emaData})
+  console.log({name:"SMA", smaData})
   console.log({name:"EMA", emaData})
   switch (timeframe) {
     case 'daily':
-      selectedData = passedData.daily["Time Series (Daily)"];
+      selectedData = passedData['daily']["Time Series (Daily)"];
       selectedEma = Object.values(emaData.Daily)
       selectedRsi = Object.values(rsiData.Daily)
       selectedSma = Object.values(smaData.Daily)
       break;
     case 'weekly':
-      selectedData = passedData.weekly["Weekly Adjusted Time Series"];
+      selectedData = passedData['weekly']["Weekly Adjusted Time Series"];
       selectedEma = Object.values(emaData.Weekly)
       selectedRsi = Object.values(rsiData.Weekly)
       selectedSma = Object.values(smaData.Weekly)
       break;
     case 'monthly':
-      selectedData = passedData.monthly["Monthly Adjusted Time Series"];
+      selectedData = passedData['monthly']["Monthly Adjusted Time Series"];
       selectedEma = Object.values(emaData.Monthly)
       selectedRsi = Object.values(rsiData.Monthly)
       selectedSma = Object.values(smaData.Monthly)
       break;
     default:
-      selectedData = passedData.daily["Time Series (Daily)"]; // Default to daily if no match
+      selectedData = passedData['daily']["Time Series (Daily)"]; // Default to daily if no match
       selectedEma = Object.values(emaData.Daily)
       selectedRsi = Object.values(rsiData.Daily)
       selectedSma = Object.values(smaData.Daily)
  
     }
 
-
+  console.log("FJHOASFJHOIASFIOASFJIASFA")
+  console.log(selectedData)
   const dates = Object.keys(selectedData);
   const opens = dates.map(date => parseFloat(selectedData[date]["1. open"]));
   const highs = dates.map(date => parseFloat(selectedData[date]["2. high"]));

@@ -56,6 +56,14 @@ function App() {
         fetchRSIData()
         fetchSMAData()
         fetchEMAData()
+      }).then(response => {
+        // process the response data (you might want to update your state with this data)
+        console.log("HEGOAJSPIASGAG")
+        console.log(rsi)
+        console.log("HEGOAJSPIASGAG")
+        console.log(sma)
+        console.log("HEGOAJSPIASGAG")
+        console.log(ema)
       }).catch(error => {
         console.error("Error fetching data: ", error)
       })
