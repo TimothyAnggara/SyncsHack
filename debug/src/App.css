@@ -59,3 +59,37 @@ input[type="text"]:focus {
   padding: 10px; /* Gives an area around the SVG making it easier to click */
   z-index: 1; /* Ensures the button stays above the input */
 }
+
+.selectors-containers {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 300px;  /* You might want to adjust this depending on your desired maximum width */
+}
+
+.selectors-containers button {
+  padding: 10px 15px;
+  background-color: #ffffff;
+  border: 1px solid #dcdfe1;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.selectors-containers button:hover {
+  background-color: #007BFF; /* Example color, you can use your desired color */
+  color: #ffffff; /* Making the text white when button is hovered */
+}
+
+.selectors-containers button:active {
+  background-color: #0056b3; /* Slightly darker shade for an active/pushed button effect */
+}
+
+.selectors-containers button.selected {
+  background-color: #007BFF;
+  color: #ffffff;
+}
