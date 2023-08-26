@@ -7,6 +7,7 @@ import Searchbar from './Components/LineChart';
 
 function App() {
   const [ticker , setTicker] = useState("")
+  
   const searchClicked = (value) => {
     setTicker(value)
   }

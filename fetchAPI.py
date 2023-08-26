@@ -19,4 +19,7 @@ def fetchDataDaily(SYMBOL):
     r = requests.get(API_URL).json()
     return r
 
-print(fetchDataDaily("AAPL"))
+r = fetchDataDaily("AAPL")
+with open('data.json', 'w') as json_file:
+    json.dump(r, json_file)
+
