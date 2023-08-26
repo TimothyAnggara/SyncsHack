@@ -1,0 +1,61 @@
+.app {
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f5f6f7;
+}
+
+input[type="text"] {
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #dcdfe1;
+  outline: none;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 400px;
+  transition: box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus {
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.chart-container {
+  width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ticker-heading {
+  margin-bottom: 20px; /* Optional: to give some space between the heading and the chart */
+  font-size: 24px;
+  color: #333;
+  text-align: center;
+}
+
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 20px;
+}
+
+
+.search-button {
+  position: absolute;
+  right: 5px;  /* Adjust based on your SVG and desired spacing */
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 10px; /* Gives an area around the SVG making it easier to click */
+  z-index: 1; /* Ensures the button stays above the input */
+}
